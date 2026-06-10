@@ -30,7 +30,6 @@
     min-height: 100vh;
   }
 
-  /* ── Header ── */
   header {
     background: var(--brown);
     padding: 28px 24px 20px;
@@ -61,10 +60,8 @@
     text-transform: uppercase;
   }
 
-  /* ── Main ── */
-  main { max-width: 680px; margin: 0 auto; padding: 28px 16px 60px; }
+  main { max-width: 700px; margin: 0 auto; padding: 28px 16px 60px; }
 
-  /* ── Config banner ── */
   #config-banner {
     background: #FFF3CD;
     border: 1.5px solid #F0C040;
@@ -77,7 +74,6 @@
   }
   #config-banner b { color: #7A5C00; }
 
-  /* ── Search card ── */
   .card {
     background: var(--white);
     border: 1.5px solid var(--border);
@@ -90,26 +86,50 @@
     font-family: 'Playfair Display', serif;
     font-size: 1.1rem;
     color: var(--brown);
-    margin-bottom: 14px;
+    margin-bottom: 16px;
     display: flex; align-items: center; gap: 8px;
   }
 
-  .search-row { display: flex; gap: 10px; }
-  .search-row input {
-    flex: 1;
-    padding: 11px 14px;
+  /* ── Filtros de búsqueda ── */
+  .filters-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .filter-field { display: flex; flex-direction: column; gap: 4px; }
+  .filter-field label {
+    font-size: .72rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+  .filter-field input {
+    padding: 9px 12px;
     border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    font-size: .95rem;
+    border-radius: 8px;
+    font-size: .88rem;
     font-family: 'Inter', sans-serif;
     background: var(--cream);
+    color: var(--text);
     transition: border-color .2s;
   }
-  .search-row input:focus { outline: none; border-color: var(--gold); }
+  .filter-field input:focus { outline: none; border-color: var(--gold); background: var(--white); }
+  .filter-field input::placeholder { color: #C4B8A8; }
 
-  /* ── Buttons ── */
+  .filter-hint {
+    font-size: .75rem;
+    color: var(--muted);
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  .search-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* ── Botones ── */
   .btn {
-    padding: 11px 20px;
+    padding: 10px 20px;
     border: none; cursor: pointer;
     border-radius: var(--radius);
     font-family: 'Inter', sans-serif;
@@ -126,36 +146,70 @@
     color: var(--muted);
   }
   .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-ghost {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-size: .8rem;
+    padding: 8px 10px;
+  }
+  .btn-ghost:hover { color: var(--error); }
   .btn-success { background: var(--success); color: #fff; }
   .btn-success:hover { background: #2E6436; }
   .btn:disabled { opacity: .5; cursor: not-allowed; }
 
-  /* ── Results list ── */
+  /* ── Tags de filtros activos ── */
+  #active-filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 12px;
+    min-height: 0;
+  }
+  .filter-tag {
+    background: var(--gold-lt);
+    color: var(--brown);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: .75rem;
+    font-weight: 600;
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  /* ── Contador de resultados ── */
+  .results-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .results-count {
+    font-size: .8rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
   #results-list { display: none; margin-bottom: 20px; }
   .result-item {
     background: var(--white);
     border: 1.5px solid var(--border);
     border-radius: var(--radius);
-    padding: 16px 18px;
-    margin-bottom: 10px;
+    padding: 14px 18px;
+    margin-bottom: 8px;
     cursor: pointer;
     transition: border-color .2s, box-shadow .2s;
     display: flex; align-items: center; gap: 14px;
   }
   .result-item:hover { border-color: var(--gold); box-shadow: 0 2px 10px rgba(184,146,42,.15); }
   .result-avatar {
-    width: 44px; height: 44px; border-radius: 50%;
+    width: 42px; height: 42px; border-radius: 50%;
     background: var(--gold-lt);
     display: flex; align-items: center; justify-content: center;
     font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--brown);
     flex-shrink: 0;
   }
-  .result-name { font-weight: 600; font-size: .95rem; }
-  .result-meta { font-size: .78rem; color: var(--muted); margin-top: 2px; }
+  .result-name { font-weight: 600; font-size: .93rem; }
+  .result-meta { font-size: .76rem; color: var(--muted); margin-top: 2px; }
 
-  /* ── Edit form ── */
+  /* ── Formulario de edición ── */
   #edit-card { display: none; }
 
   .back-btn {
@@ -177,6 +231,8 @@
     margin-top: 22px;
     padding-bottom: 6px;
     border-bottom: 1px solid var(--border);
+    display: block;
+    width: 100%;
   }
 
   .field-grid {
@@ -196,6 +252,7 @@
     letter-spacing: .05em;
   }
   .field input, .field select {
+    width: 100%;
     padding: 10px 12px;
     border: 1.5px solid var(--border);
     border-radius: 8px;
@@ -204,6 +261,7 @@
     background: var(--cream);
     color: var(--text);
     transition: border-color .2s;
+    min-width: 0;
   }
   .field input:focus, .field select:focus {
     outline: none; border-color: var(--gold);
@@ -219,7 +277,6 @@
     border-top: 1px solid var(--border);
   }
 
-  /* ── Toast ── */
   #toast {
     position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
     padding: 12px 24px; border-radius: 50px;
@@ -231,9 +288,8 @@
   #toast.ok  { background: var(--success); color: #fff; }
   #toast.err { background: var(--error);   color: #fff; }
 
-  /* ── Loading ── */
   .spinner {
-    display: inline-block; width: 18px; height: 18px;
+    display: inline-block; width: 16px; height: 16px;
     border: 2px solid rgba(255,255,255,.4);
     border-top-color: #fff;
     border-radius: 50%;
@@ -248,9 +304,12 @@
   }
   .empty-state .big { font-size: 2rem; display: block; margin-bottom: 8px; }
 
-  @media (max-width: 500px) {
+  @media (max-width: 540px) {
+    .filters-grid { grid-template-columns: 1fr; }
     .field-grid, .field-grid.triple { grid-template-columns: 1fr; }
-    .search-row { flex-direction: column; }
+  }
+  @media (max-width: 620px) {
+    .field-grid.triple { grid-template-columns: 1fr 1fr; }
   }
 </style>
 </head>
@@ -264,26 +323,52 @@
 
 <main>
 
-  <!-- Banner de configuración -->
   <div id="config-banner">
-    ⚙️ <b>Configuración pendiente:</b> Abre este archivo HTML en un editor de texto y reemplaza
-    <code>TU_URL_DEL_SCRIPT_AQUÍ</code> con la URL de tu Apps Script.<br>
-    Consulta las instrucciones en el archivo <code>INSTRUCCIONES.txt</code>.
+    ⚙️ <b>Configuración pendiente:</b> Abre este archivo en Bloc de notas y reemplaza
+    <code>TU_URL_DEL_SCRIPT_AQUÍ</code> con la URL de tu Apps Script.
   </div>
 
-  <!-- Búsqueda -->
+  <!-- Búsqueda con múltiples filtros -->
   <div class="card">
-    <div class="card-title">🔍 Buscar niño/a</div>
-    <div class="search-row">
-      <input type="text" id="search-input"
-        placeholder="Nombre del niño/a o número de celular…"
-        autocomplete="off">
-      <button class="btn btn-gold" id="btn-search">Buscar</button>
+    <div class="card-title">🔍 Buscar registro</div>
+
+    <div class="filter-hint">
+      💡 Llena uno o varios campos — los filtros se combinan entre sí
     </div>
-    <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
-      <button class="btn btn-outline" id="btn-all" style="font-size:.8rem;padding:7px 14px;">
-        Ver todos los registros
-      </button>
+
+    <div class="filters-grid">
+      <div class="filter-field">
+        <label>Nombre del niño/a</label>
+        <input type="text" id="f-search-nombre" placeholder="ej. Valentina…">
+      </div>
+      <div class="filter-field">
+        <label>Catequista</label>
+        <input type="text" id="f-search-catequista" placeholder="ej. Orlane…">
+      </div>
+      <div class="filter-field">
+        <label>Celular de contacto</label>
+        <input type="text" id="f-search-celular" placeholder="ej. 311…">
+      </div>
+      <div class="filter-field">
+        <label>Nombre del papá o mamá</label>
+        <input type="text" id="f-search-padre" placeholder="ej. Diego…">
+      </div>
+      <div class="filter-field">
+        <label>Padrino o madrina</label>
+        <input type="text" id="f-search-padrino" placeholder="ej. América…">
+      </div>
+      <div class="filter-field">
+        <label>Parroquia de bautismo</label>
+        <input type="text" id="f-search-parroquia" placeholder="ej. San Juan…">
+      </div>
+    </div>
+
+    <div id="active-filters"></div>
+
+    <div class="search-actions">
+      <button class="btn btn-gold" id="btn-search">Buscar</button>
+      <button class="btn btn-outline" id="btn-all">Ver todos</button>
+      <button class="btn btn-ghost" id="btn-clear">✕ Limpiar filtros</button>
     </div>
   </div>
 
@@ -360,7 +445,9 @@
           <label>Parroquia de Bautismo</label>
           <input type="text" id="f-parroquia">
         </div>
-        <div class="field" style="margin-top:12px;">
+      </div>
+      <div class="field-grid single" style="margin-top:12px;">
+        <div class="field">
           <label>Otra Parroquia (si aplica)</label>
           <input type="text" id="f-otra-parroquia">
         </div>
@@ -385,6 +472,7 @@
           <input type="number" id="f-anio-bau" min="2000" max="2030">
         </div>
       </div>
+      <!-- FIX: Libro, Foja y Acta en grid separado para evitar desbordamiento -->
       <div class="field-grid triple" style="margin-top:12px;">
         <div class="field">
           <label>Libro de Bautismo</label>
@@ -428,36 +516,35 @@
 // ─────────────────────────────────────────────
 //  ⚠️  REEMPLAZA ESTA URL CON LA DE TU SCRIPT
 // ─────────────────────────────────────────────
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxzbTPG85LiDoGPHcUwgmxA4KWjK7GKDAZ2xfjVOoEujW_KmLu0qXhWTjQD_-A-kgQf/exec";
+const SCRIPT_URL = "TU_URL_DEL_SCRIPT_AQUÍ";
 
-// Columnas exactas del sheet (deben coincidir con los encabezados)
 const COLS = {
-  timestamp:       "Marca temporal",
-  celular:         "CELULAR DE CONTACTO",
-  diaCom:          "DIA DE COMUNION",
-  mesCom:          "MES DE COMUNION",
-  anioCom:         "AÑO DE COMUNION",
-  nombre:          "NOMBRE DEL NIÑ@",
-  papa:            "NOMBRE DEL PAPÁ:",
-  mama:            "NOMBRE DE LA MAMÁ:",
-  padrino:         "NOMBRE DEL PADRINO:",
-  madrina:         "NOMBRE DE LA MADRINA:",
-  parroquia:       "PARROQUIA DE BAUTISMO",
-  otraParroquia:   "OTRA PARROQUIA DE BAUTISMO",
-  diaBau:          "DIA DEL BAUTISMO",
-  mesBau:          "MES DEL BAUTISMO",
-  anioBau:         "AÑO DEL BAUTISMO",
-  libro:           "LIBRO DE BAUTISMO",
-  pagina:          "PAGINA (FOJA) DE BAUTISMO",
-  acta:            "ACTA (PARTIDA) DE BAUTISMO",
-  catequista:      "CATEQUISTA",
-  hora:            "HORA DE COMUNION",
+  timestamp:     "Marca temporal",
+  celular:       "CELULAR DE CONTACTO",
+  diaCom:        "DIA DE COMUNION",
+  mesCom:        "MES DE COMUNION",
+  anioCom:       "AÑO DE COMUNION",
+  nombre:        "NOMBRE DEL NIÑ@",
+  papa:          "NOMBRE DEL PAPÁ:",
+  mama:          "NOMBRE DE LA MAMÁ:",
+  padrino:       "NOMBRE DEL PADRINO:",
+  madrina:       "NOMBRE DE LA MADRINA:",
+  parroquia:     "PARROQUIA DE BAUTISMO",
+  otraParroquia: "OTRA PARROQUIA DE BAUTISMO",
+  diaBau:        "DIA DEL BAUTISMO",
+  mesBau:        "MES DEL BAUTISMO",
+  anioBau:       "AÑO DEL BAUTISMO",
+  libro:         "LIBRO DE BAUTISMO",
+  pagina:        "PAGINA (FOJA) DE BAUTISMO",
+  acta:          "ACTA (PARTIDA) DE BAUTISMO",
+  catequista:    "CATEQUISTA",
+  hora:          "HORA DE COMUNION",
 };
 
 let currentRecord = null;
 let lastResults   = [];
+let allRecords    = [];  // cache para filtrar en cliente
 
-// ── Config check ──
 if (SCRIPT_URL === "TU_URL_DEL_SCRIPT_AQUÍ") {
   document.getElementById("config-banner").style.display = "block";
 }
@@ -470,18 +557,16 @@ function toast(msg, type = "ok") {
   t.style.display = "block";
   setTimeout(() => t.style.display = "none", 3500);
 }
-
 function initials(name) {
-  return (name || "?").split(" ").slice(0,2)
-    .map(w => w[0]).join("").toUpperCase();
+  return (name || "?").split(" ").slice(0,2).map(w => w[0]).join("").toUpperCase();
 }
+function norm(s) { return String(s || "").toLowerCase().trim(); }
 
 async function apiFetch(params) {
   const url = SCRIPT_URL + "?" + new URLSearchParams(params);
   const res = await fetch(url);
   return res.json();
 }
-
 async function apiPost(body) {
   const res = await fetch(SCRIPT_URL, {
     method: "POST",
@@ -491,90 +576,158 @@ async function apiPost(body) {
   return res.json();
 }
 
-// ── Search ──
-document.getElementById("btn-search").addEventListener("click", doSearch);
-document.getElementById("search-input").addEventListener("keydown", e => {
-  if (e.key === "Enter") doSearch();
-});
-document.getElementById("btn-all").addEventListener("click", () => {
-  loadResults({ action: "getAll" });
-});
-
-async function doSearch() {
-  const q = document.getElementById("search-input").value.trim();
-  if (!q) { toast("Escribe un nombre o celular para buscar", "err"); return; }
-  loadResults({ action: "search", q });
-}
-
-async function loadResults(params) {
+// ── Obtener todos los registros (una vez, luego filtrar en cliente) ──
+async function ensureAllLoaded() {
+  if (allRecords.length > 0) return;
   const btn = document.getElementById("btn-search");
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>';
-  document.getElementById("edit-card").style.display = "none";
-
   try {
-    const data = await apiFetch(params);
-    lastResults = data.results || [];
-    renderResults(lastResults);
-  } catch(e) {
-    toast("Error al conectar. ¿Configuraste la URL del script?", "err");
+    const data = await apiFetch({ action: "getAll" });
+    allRecords = data.results || [];
   } finally {
     btn.disabled = false;
     btn.textContent = "Buscar";
   }
 }
 
+// ── Leer filtros activos ──
+function getFilters() {
+  return {
+    nombre:    norm(document.getElementById("f-search-nombre").value),
+    catequista:norm(document.getElementById("f-search-catequista").value),
+    celular:   norm(document.getElementById("f-search-celular").value),
+    padre:     norm(document.getElementById("f-search-padre").value),
+    padrino:   norm(document.getElementById("f-search-padrino").value),
+    parroquia: norm(document.getElementById("f-search-parroquia").value),
+  };
+}
+
+function hasAnyFilter(f) {
+  return Object.values(f).some(v => v !== "");
+}
+
+// ── Aplicar filtros combinados (todos los activos deben coincidir) ──
+function applyFilters(records, f) {
+  return records.filter(r => {
+    if (f.nombre    && !norm(r[COLS.nombre]).includes(f.nombre))       return false;
+    if (f.catequista && !norm(r[COLS.catequista]).includes(f.catequista)) return false;
+    if (f.celular   && !norm(r[COLS.celular]).includes(f.celular))     return false;
+    if (f.padre     && !norm(r[COLS.papa]).includes(f.padre) &&
+                       !norm(r[COLS.mama]).includes(f.padre))          return false;
+    if (f.padrino   && !norm(r[COLS.padrino]).includes(f.padrino) &&
+                       !norm(r[COLS.madrina]).includes(f.padrino))     return false;
+    if (f.parroquia && !norm(r[COLS.parroquia]).includes(f.parroquia) &&
+                       !norm(r[COLS.otraParroquia]).includes(f.parroquia)) return false;
+    return true;
+  });
+}
+
+// ── Mostrar tags de filtros activos ──
+function renderActiveTags(f) {
+  const labels = {
+    nombre: "Niño/a", catequista: "Catequista", celular: "Celular",
+    padre: "Papá/Mamá", padrino: "Padrino/Madrina", parroquia: "Parroquia"
+  };
+  const el = document.getElementById("active-filters");
+  const tags = Object.entries(f)
+    .filter(([,v]) => v !== "")
+    .map(([k,v]) => `<span class="filter-tag">🔖 ${labels[k]}: ${v}</span>`)
+    .join("");
+  el.innerHTML = tags;
+}
+
+// ── Buscar ──
+document.getElementById("btn-search").addEventListener("click", doSearch);
+document.getElementById("btn-all").addEventListener("click", async () => {
+  await ensureAllLoaded();
+  renderResults(allRecords);
+  renderActiveTags({});
+});
+document.getElementById("btn-clear").addEventListener("click", () => {
+  ["nombre","catequista","celular","padre","padrino","parroquia"].forEach(id => {
+    document.getElementById("f-search-" + id).value = "";
+  });
+  document.getElementById("active-filters").innerHTML = "";
+  document.getElementById("results-list").style.display = "none";
+});
+
+// Buscar también con Enter en cualquier campo de filtro
+document.querySelectorAll(".filter-field input").forEach(inp => {
+  inp.addEventListener("keydown", e => { if (e.key === "Enter") doSearch(); });
+});
+
+async function doSearch() {
+  const f = getFilters();
+  if (!hasAnyFilter(f)) { toast("Escribe al menos un filtro para buscar", "err"); return; }
+
+  await ensureAllLoaded();
+  document.getElementById("edit-card").style.display = "none";
+
+  const results = applyFilters(allRecords, f);
+  renderActiveTags(f);
+  renderResults(results);
+}
+
 function renderResults(rows) {
+  lastResults = rows;
   const el = document.getElementById("results-list");
   el.style.display = "block";
 
   if (!rows.length) {
     el.innerHTML = `<div class="empty-state">
       <span class="big">🔍</span>
-      No se encontraron registros
+      No se encontraron registros con esos filtros
     </div>`;
     return;
   }
 
-  el.innerHTML = rows.map((r, i) => `
+  const header = `<div class="results-header">
+    <span class="results-count">${rows.length} registro${rows.length !== 1 ? "s" : ""} encontrado${rows.length !== 1 ? "s" : ""}</span>
+  </div>`;
+
+  const items = rows.map((r, i) => `
     <div class="result-item" onclick="openEdit(${i})">
       <div class="result-avatar">${initials(r[COLS.nombre])}</div>
       <div>
         <div class="result-name">${r[COLS.nombre] || "(sin nombre)"}</div>
         <div class="result-meta">
+          👩‍🏫 ${r[COLS.catequista] || "—"} &nbsp;·&nbsp;
           📱 ${r[COLS.celular] || "—"} &nbsp;·&nbsp;
-          📅 ${r[COLS.diaCom] || "?"} de ${r[COLS.mesCom] || "?"} ${r[COLS.anioCom] || ""}
+          📅 ${r[COLS.diaCom] || "?"} ${r[COLS.mesCom] || ""} ${r[COLS.anioCom] || ""}
         </div>
       </div>
     </div>
   `).join("");
+
+  el.innerHTML = header + items;
 }
 
-// ── Edit ──
+// ── Editar ──
 function openEdit(idx) {
   currentRecord = lastResults[idx];
   const r = currentRecord;
 
-  document.getElementById("f-timestamp").value   = r[COLS.timestamp]  || "";
-  document.getElementById("f-celular").value      = r[COLS.celular]    || "";
-  document.getElementById("f-dia-com").value      = r[COLS.diaCom]    || "";
-  document.getElementById("f-mes-com").value      = r[COLS.mesCom]    || "";
-  document.getElementById("f-anio-com").value     = r[COLS.anioCom]   || "";
-  document.getElementById("f-hora").value         = r[COLS.hora]      || "";
-  document.getElementById("f-nombre").value       = r[COLS.nombre]    || "";
-  document.getElementById("f-papa").value         = r[COLS.papa]      || "";
-  document.getElementById("f-mama").value         = r[COLS.mama]      || "";
-  document.getElementById("f-padrino").value      = r[COLS.padrino]   || "";
-  document.getElementById("f-madrina").value      = r[COLS.madrina]   || "";
-  document.getElementById("f-parroquia").value    = r[COLS.parroquia] || "";
+  document.getElementById("f-timestamp").value     = r[COLS.timestamp]     || "";
+  document.getElementById("f-celular").value        = r[COLS.celular]       || "";
+  document.getElementById("f-dia-com").value        = r[COLS.diaCom]        || "";
+  document.getElementById("f-mes-com").value        = r[COLS.mesCom]        || "";
+  document.getElementById("f-anio-com").value       = r[COLS.anioCom]       || "";
+  document.getElementById("f-hora").value           = r[COLS.hora]          || "";
+  document.getElementById("f-nombre").value         = r[COLS.nombre]        || "";
+  document.getElementById("f-papa").value           = r[COLS.papa]          || "";
+  document.getElementById("f-mama").value           = r[COLS.mama]          || "";
+  document.getElementById("f-padrino").value        = r[COLS.padrino]       || "";
+  document.getElementById("f-madrina").value        = r[COLS.madrina]       || "";
+  document.getElementById("f-parroquia").value      = r[COLS.parroquia]     || "";
   document.getElementById("f-otra-parroquia").value = r[COLS.otraParroquia] || "";
-  document.getElementById("f-dia-bau").value      = r[COLS.diaBau]   || "";
-  document.getElementById("f-mes-bau").value      = r[COLS.mesBau]   || "";
-  document.getElementById("f-anio-bau").value     = r[COLS.anioBau]  || "";
-  document.getElementById("f-libro").value        = r[COLS.libro]    || "";
-  document.getElementById("f-pagina").value       = r[COLS.pagina]   || "";
-  document.getElementById("f-acta").value         = r[COLS.acta]     || "";
-  document.getElementById("f-catequista").value   = r[COLS.catequista] || "";
+  document.getElementById("f-dia-bau").value        = r[COLS.diaBau]        || "";
+  document.getElementById("f-mes-bau").value        = r[COLS.mesBau]        || "";
+  document.getElementById("f-anio-bau").value       = r[COLS.anioBau]       || "";
+  document.getElementById("f-libro").value          = r[COLS.libro]         || "";
+  document.getElementById("f-pagina").value         = r[COLS.pagina]        || "";
+  document.getElementById("f-acta").value           = r[COLS.acta]          || "";
+  document.getElementById("f-catequista").value     = r[COLS.catequista]    || "";
 
   document.getElementById("results-list").style.display = "none";
   document.getElementById("edit-card").style.display = "block";
@@ -620,10 +773,12 @@ document.getElementById("btn-save").addEventListener("click", async () => {
   try {
     const res = await apiPost({ action: "update", row: currentRecord._row, fields });
     if (res.success) {
+      // Actualizar también el cache local
+      const idx = allRecords.findIndex(r => r._row === currentRecord._row);
+      if (idx >= 0) Object.assign(allRecords[idx], fields);
       toast("✅ Registro actualizado correctamente");
       document.getElementById("edit-card").style.display = "none";
       document.getElementById("results-list").style.display = "none";
-      document.getElementById("search-input").value = "";
     } else {
       toast("Error al guardar. Intenta de nuevo.", "err");
     }
