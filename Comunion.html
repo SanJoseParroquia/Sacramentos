@@ -363,6 +363,32 @@
       </div>
     </div>
 
+    <div style="font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin:10px 0 8px;">📅 Fecha y hora de comunión</div>
+    <div class="filters-grid">
+      <div class="filter-field">
+        <label>Día</label>
+        <input type="number" id="f-search-dia" placeholder="ej. 5" min="1" max="31">
+      </div>
+      <div class="filter-field">
+        <label>Mes</label>
+        <select id="f-search-mes" style="padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.88rem;font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);">
+          <option value="">— Todos —</option>
+          <option>Enero</option><option>Febrero</option><option>Marzo</option>
+          <option>Abril</option><option>Mayo</option><option>Junio</option>
+          <option>Julio</option><option>Agosto</option><option>Septiembre</option>
+          <option>Octubre</option><option>Noviembre</option><option>Diciembre</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <label>Año</label>
+        <input type="number" id="f-search-anio" placeholder="ej. 2026" min="2020" max="2035">
+      </div>
+      <div class="filter-field">
+        <label>Hora de comunión</label>
+        <input type="text" id="f-search-hora" placeholder="ej. 11:00 AM">
+      </div>
+    </div>
+
     <div id="active-filters"></div>
 
     <div class="search-actions">
@@ -600,6 +626,10 @@ function getFilters() {
     padre:     norm(document.getElementById("f-search-padre").value),
     padrino:   norm(document.getElementById("f-search-padrino").value),
     parroquia: norm(document.getElementById("f-search-parroquia").value),
+    dia:       norm(document.getElementById("f-search-dia").value),
+    mes:       norm(document.getElementById("f-search-mes").value),
+    anio:      norm(document.getElementById("f-search-anio").value),
+    hora:      norm(document.getElementById("f-search-hora").value),
   };
 }
 
@@ -619,6 +649,10 @@ function applyFilters(records, f) {
                        !norm(r[COLS.madrina]).includes(f.padrino))     return false;
     if (f.parroquia && !norm(r[COLS.parroquia]).includes(f.parroquia) &&
                        !norm(r[COLS.otraParroquia]).includes(f.parroquia)) return false;
+    if (f.dia       && norm(r[COLS.diaCom]) !== f.dia)                 return false;
+    if (f.mes       && norm(r[COLS.mesCom]) !== f.mes)                 return false;
+    if (f.anio      && norm(r[COLS.anioCom]) !== f.anio)               return false;
+    if (f.hora      && !norm(r[COLS.hora]).includes(f.hora))           return false;
     return true;
   });
 }
@@ -627,7 +661,8 @@ function applyFilters(records, f) {
 function renderActiveTags(f) {
   const labels = {
     nombre: "Niño/a", catequista: "Catequista", celular: "Celular",
-    padre: "Papá/Mamá", padrino: "Padrino/Madrina", parroquia: "Parroquia"
+    padre: "Papá/Mamá", padrino: "Padrino/Madrina", parroquia: "Parroquia",
+    dia: "Día", mes: "Mes", anio: "Año", hora: "Hora"
   };
   const el = document.getElementById("active-filters");
   const tags = Object.entries(f)
@@ -648,12 +683,16 @@ document.getElementById("btn-clear").addEventListener("click", () => {
   ["nombre","catequista","celular","padre","padrino","parroquia"].forEach(id => {
     document.getElementById("f-search-" + id).value = "";
   });
+  document.getElementById("f-search-mes").value = "";
+  ["dia","anio","hora"].forEach(id => {
+    document.getElementById("f-search-" + id).value = "";
+  });
   document.getElementById("active-filters").innerHTML = "";
   document.getElementById("results-list").style.display = "none";
 });
 
 // Buscar también con Enter en cualquier campo de filtro
-document.querySelectorAll(".filter-field input").forEach(inp => {
+document.querySelectorAll(".filter-field input, .filter-field select").forEach(inp => {
   inp.addEventListener("keydown", e => { if (e.key === "Enter") doSearch(); });
 });
 
