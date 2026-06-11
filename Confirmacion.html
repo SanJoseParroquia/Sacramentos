@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confirmación — Corrección de Datos</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;500;600&display=swap');
+
+  :root {
+    --cream:   #F2F4FA;
+    --blue:    #2A4A8B;
+    --blue-lt: #A3B4E0;
+    --navy:    #1A2E5A;
+    --text:    #161E35;
+    --muted:   #6A7A98;
+    --white:   #FFFFFF;
+    --border:  #C4CCDE;
+    --success: #3A7D44;
+    --error:   #C0392B;
+    --radius:  10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--navy);
+    padding: 28px 24px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% -20%, rgba(42,74,139,.5) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .dove-icon { font-size: 28px; display: block; margin-bottom: 6px; opacity: .85; }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    color: var(--blue-lt);
+    font-size: clamp(1.25rem, 4vw, 1.75rem);
+    font-weight: 700;
+    letter-spacing: .03em;
+    line-height: 1.2;
+  }
+  header p {
+    color: rgba(255,255,255,.5);
+    font-size: .8rem;
+    margin-top: 6px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+
+  main { max-width: 700px; margin: 0 auto; padding: 28px 16px 60px; }
+
+  #config-banner {
+    background: #FFF3CD;
+    border: 1.5px solid #F0C040;
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    font-size: .85rem;
+    margin-bottom: 22px;
+    display: none;
+    line-height: 1.6;
+  }
+  #config-banner b { color: #7A5C00; }
+
+  .card {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(26,46,90,.06);
+  }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--navy);
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .filters-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .filter-field { display: flex; flex-direction: column; gap: 4px; }
+  .filter-field label {
+    font-size: .72rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+  .filter-field input, .filter-field select {
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: .88rem;
+    font-family: 'Inter', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    transition: border-color .2s;
+    width: 100%;
+  }
+  .filter-field input:focus, .filter-field select:focus {
+    outline: none; border-color: var(--blue); background: var(--white);
+  }
+  .filter-field input::placeholder { color: #B0BACE; }
+
+  .filter-hint {
+    font-size: .75rem; color: var(--muted);
+    margin-bottom: 12px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .filter-section-label {
+    font-size: .72rem; font-weight: 600;
+    color: var(--muted); text-transform: uppercase;
+    letter-spacing: .07em; margin: 10px 0 8px;
+  }
+
+  .search-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .btn {
+    padding: 10px 20px;
+    border: none; cursor: pointer;
+    border-radius: var(--radius);
+    font-family: 'Inter', sans-serif;
+    font-weight: 600; font-size: .9rem;
+    transition: all .2s; white-space: nowrap;
+  }
+  .btn-blue { background: var(--blue); color: #fff; }
+  .btn-blue:hover { background: #1E3A6E; }
+  .btn-outline {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+  }
+  .btn-outline:hover { border-color: var(--blue); color: var(--blue); }
+  .btn-ghost { background: transparent; border: none; color: var(--muted); font-size: .8rem; padding: 8px 10px; }
+  .btn-ghost:hover { color: var(--error); }
+  .btn-success { background: var(--success); color: #fff; }
+  .btn-success:hover { background: #2E6436; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  #active-filters {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 12px;
+  }
+  .filter-tag {
+    background: var(--blue-lt);
+    color: var(--navy);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: .75rem; font-weight: 600;
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  .results-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .results-count { font-size: .8rem; color: var(--muted); font-weight: 500; }
+
+  #results-list { display: none; margin-bottom: 20px; }
+  .result-item {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px; margin-bottom: 8px;
+    cursor: pointer;
+    transition: border-color .2s, box-shadow .2s;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .result-item:hover { border-color: var(--blue); box-shadow: 0 2px 10px rgba(42,74,139,.15); }
+  .result-avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: var(--blue-lt);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem; color: var(--navy); flex-shrink: 0;
+  }
+  .result-name { font-weight: 600; font-size: .93rem; }
+  .result-meta { font-size: .76rem; color: var(--muted); margin-top: 2px; }
+
+  #edit-card { display: none; }
+
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: .82rem; color: var(--muted);
+    cursor: pointer; margin-bottom: 18px;
+    background: none; border: none; padding: 0;
+    font-family: 'Inter', sans-serif; transition: color .2s;
+  }
+  .back-btn:hover { color: var(--blue); }
+
+  .section-label {
+    font-size: .7rem; text-transform: uppercase;
+    letter-spacing: .1em; color: var(--muted);
+    margin-bottom: 14px; margin-top: 22px;
+    padding-bottom: 6px; border-bottom: 1px solid var(--border);
+    display: block; width: 100%;
+  }
+
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .field-grid.single { grid-template-columns: 1fr; }
+  .field-grid.triple { grid-template-columns: 1fr 1fr 1fr; }
+
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label {
+    font-size: .74rem; font-weight: 600;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .05em;
+  }
+  .field input, .field select {
+    width: 100%; padding: 10px 12px;
+    border: 1.5px solid var(--border); border-radius: 8px;
+    font-size: .9rem; font-family: 'Inter', sans-serif;
+    background: var(--cream); color: var(--text);
+    transition: border-color .2s; min-width: 0;
+  }
+  .field input:focus, .field select:focus {
+    outline: none; border-color: var(--blue); background: var(--white);
+  }
+  .field input[readonly] { background: #EAECF2; color: var(--muted); cursor: not-allowed; }
+
+  .actions {
+    display: flex; gap: 10px; justify-content: flex-end;
+    margin-top: 24px; padding-top: 18px;
+    border-top: 1px solid var(--border);
+  }
+
+  #toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    padding: 12px 24px; border-radius: 50px;
+    font-size: .88rem; font-weight: 600;
+    box-shadow: 0 4px 20px rgba(0,0,0,.18);
+    display: none; z-index: 100; white-space: nowrap;
+  }
+  #toast.ok  { background: var(--success); color: #fff; }
+  #toast.err { background: var(--error);   color: #fff; }
+
+  .spinner {
+    display: inline-block; width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,.4); border-top-color: #fff;
+    border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .empty-state { text-align: center; padding: 32px 16px; color: var(--muted); font-size: .9rem; }
+  .empty-state .big { font-size: 2rem; display: block; margin-bottom: 8px; }
+
+  @media (max-width: 540px) {
+    .filters-grid { grid-template-columns: 1fr; }
+    .field-grid, .field-grid.triple { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 620px) {
+    .field-grid.triple { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="dove-icon">🕊️</span>
+  <h1>Confirmación</h1>
+  <p>Corrección de datos</p>
+</header>
+
+<main>
+
+  <div id="config-banner">
+    ⚙️ <b>Configuración pendiente:</b> Abre este archivo en Bloc de notas y reemplaza
+    <code>TU_URL_DEL_SCRIPT_AQUÍ</code> con la URL de tu Apps Script.
+  </div>
+
+  <div class="card">
+    <div class="card-title">🔍 Buscar registro</div>
+
+    <div class="filter-hint">💡 Llena uno o varios campos — los filtros se combinan entre sí</div>
+
+    <div class="filters-grid">
+      <div class="filter-field">
+        <label>Nombre del niño/a</label>
+        <input type="text" id="f-search-nombre" placeholder="ej. Valentina…">
+      </div>
+      <div class="filter-field">
+        <label>Catequista</label>
+        <input type="text" id="f-search-catequista" placeholder="ej. Orlane…">
+      </div>
+      <div class="filter-field">
+        <label>Celular de contacto</label>
+        <input type="text" id="f-search-celular" placeholder="ej. 311…">
+      </div>
+      <div class="filter-field">
+        <label>Nombre del papá o mamá</label>
+        <input type="text" id="f-search-padre" placeholder="ej. Diego…">
+      </div>
+      <div class="filter-field">
+        <label>Padrino o madrina</label>
+        <input type="text" id="f-search-padrino" placeholder="ej. América…">
+      </div>
+      <div class="filter-field">
+        <label>Parroquia de bautismo</label>
+        <input type="text" id="f-search-parroquia" placeholder="ej. San Juan…">
+      </div>
+    </div>
+
+    <div class="filter-section-label">📅 Fecha y hora de confirmación</div>
+    <div class="filters-grid">
+      <div class="filter-field">
+        <label>Día</label>
+        <input type="number" id="f-search-dia" placeholder="ej. 5" min="1" max="31">
+      </div>
+      <div class="filter-field">
+        <label>Mes</label>
+        <select id="f-search-mes">
+          <option value="">— Todos —</option>
+          <option>Enero</option><option>Febrero</option><option>Marzo</option>
+          <option>Abril</option><option>Mayo</option><option>Junio</option>
+          <option>Julio</option><option>Agosto</option><option>Septiembre</option>
+          <option>Octubre</option><option>Noviembre</option><option>Diciembre</option>
+        </select>
+      </div>
+      <div class="filter-field">
+        <label>Año</label>
+        <input type="number" id="f-search-anio" placeholder="ej. 2026" min="2020" max="2035">
+      </div>
+      <div class="filter-field">
+        <label>Hora de confirmación</label>
+        <input type="text" id="f-search-hora" placeholder="ej. 11:00 AM">
+      </div>
+    </div>
+
+    <div id="active-filters"></div>
+
+    <div class="search-actions">
+      <button class="btn btn-blue" id="btn-search">Buscar</button>
+      <button class="btn btn-outline" id="btn-all">Ver todos</button>
+      <button class="btn btn-ghost" id="btn-clear">✕ Limpiar filtros</button>
+    </div>
+  </div>
+
+  <div id="results-list"></div>
+
+  <div id="edit-card">
+    <button class="back-btn" id="btn-back">← Volver a resultados</button>
+    <div class="card">
+      <div class="card-title">✏️ Editar registro</div>
+
+      <div class="section-label">📅 Datos de la Confirmación</div>
+      <div class="field-grid triple">
+        <div class="field">
+          <label>Día</label>
+          <input type="number" id="f-dia-conf" min="1" max="31">
+        </div>
+        <div class="field">
+          <label>Mes</label>
+          <select id="f-mes-conf">
+            <option value="">—</option>
+            <option>Enero</option><option>Febrero</option><option>Marzo</option>
+            <option>Abril</option><option>Mayo</option><option>Junio</option>
+            <option>Julio</option><option>Agosto</option><option>Septiembre</option>
+            <option>Octubre</option><option>Noviembre</option><option>Diciembre</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Año</label>
+          <input type="number" id="f-anio-conf" min="2020" max="2035">
+        </div>
+      </div>
+      <div class="field-grid" style="margin-top:12px;">
+        <div class="field">
+          <label>Hora de Confirmación</label>
+          <input type="text" id="f-hora" placeholder="ej. 11:00 AM">
+        </div>
+        <div class="field">
+          <label>Celular de contacto</label>
+          <input type="text" id="f-celular" placeholder="10 dígitos">
+        </div>
+      </div>
+
+      <div class="section-label">👦 Datos del confirmando/a</div>
+      <div class="field-grid single">
+        <div class="field">
+          <label>Nombre del niño/a</label>
+          <input type="text" id="f-nombre">
+        </div>
+      </div>
+      <div class="field-grid" style="margin-top:12px;">
+        <div class="field">
+          <label>Nombre del papá</label>
+          <input type="text" id="f-papa">
+        </div>
+        <div class="field">
+          <label>Nombre de la mamá</label>
+          <input type="text" id="f-mama">
+        </div>
+        <div class="field">
+          <label>Nombre del padrino</label>
+          <input type="text" id="f-padrino">
+        </div>
+        <div class="field">
+          <label>Nombre de la madrina</label>
+          <input type="text" id="f-madrina">
+        </div>
+      </div>
+
+      <div class="section-label">⛪ Datos del Bautismo</div>
+      <div class="field-grid single">
+        <div class="field">
+          <label>Parroquia de Bautismo</label>
+          <input type="text" id="f-parroquia">
+        </div>
+      </div>
+      <div class="field-grid single" style="margin-top:12px;">
+        <div class="field">
+          <label>Otra Parroquia (si aplica)</label>
+          <input type="text" id="f-otra-parroquia">
+        </div>
+      </div>
+      <div class="field-grid triple" style="margin-top:12px;">
+        <div class="field">
+          <label>Día del Bautismo</label>
+          <input type="number" id="f-dia-bau" min="1" max="31">
+        </div>
+        <div class="field">
+          <label>Mes del Bautismo</label>
+          <select id="f-mes-bau">
+            <option value="">—</option>
+            <option>Enero</option><option>Febrero</option><option>Marzo</option>
+            <option>Abril</option><option>Mayo</option><option>Junio</option>
+            <option>Julio</option><option>Agosto</option><option>Septiembre</option>
+            <option>Octubre</option><option>Noviembre</option><option>Diciembre</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Año del Bautismo</label>
+          <input type="number" id="f-anio-bau" min="2000" max="2030">
+        </div>
+      </div>
+      <div class="field-grid triple" style="margin-top:12px;">
+        <div class="field">
+          <label>Libro de Bautismo</label>
+          <input type="text" id="f-libro">
+        </div>
+        <div class="field">
+          <label>Página (Foja)</label>
+          <input type="text" id="f-pagina">
+        </div>
+        <div class="field">
+          <label>Acta (Partida)</label>
+          <input type="text" id="f-acta">
+        </div>
+      </div>
+
+      <div class="section-label">👩‍🏫 Catequista</div>
+      <div class="field-grid single">
+        <div class="field">
+          <label>Nombre del catequista</label>
+          <input type="text" id="f-catequista">
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:18px;">
+        <label>Marca temporal (solo lectura)</label>
+        <input type="text" id="f-timestamp" readonly>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-outline" id="btn-cancel">Cancelar</button>
+        <button class="btn btn-success" id="btn-save">💾 Guardar cambios</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────
+//  ⚠️  REEMPLAZA ESTA URL CON LA DE TU SCRIPT
+// ─────────────────────────────────────────────
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwFVJgbxTE7fUz1sQOrDl-wHzWrNKk35EOV1kRsFJDT0n36i3XjH2nHn2gBGWGuvBCvmQ/exec";
+
+const COLS = {
+  timestamp:     "Marca temporal",
+  celular:       "CELULAR DE CONTACTO",
+  diaConf:       "DIA DE CONFIRMACION",
+  mesConf:       "MES DE CONFIRMACION",
+  anioConf:      "AÑO DE CONFIRMACION",
+  horaConf:      "HORA DE CONFIRMACION",
+  nombre:        "NOMBRE DEL NIÑ@",
+  papa:          "NOMBRE DEL PAPÁ:",
+  mama:          "NOMBRE DE LA MAMÁ:",
+  padrino:       "NOMBRE DEL PADRINO:",
+  madrina:       "NOMBRE DE LA MADRINA:",
+  parroquia:     "PARROQUIA DE BAUTISMO",
+  otraParroquia: "OTRA PARROQUIA DE BAUTISMO",
+  diaBau:        "DIA DEL BAUTISMO",
+  mesBau:        "MES DEL BAUTISMO",
+  anioBau:       "AÑO DEL BAUTISMO",
+  libro:         "LIBRO DE BAUTISMO",
+  pagina:        "PAGINA (FOJA) DE BAUTISMO",
+  acta:          "ACTA (PARTIDA) DE BAUTISMO",
+  catequista:    "CATEQUISTA",
+};
+
+let currentRecord = null;
+let lastResults   = [];
+let allRecords    = [];
+
+if (SCRIPT_URL === "TU_URL_DEL_SCRIPT_AQUÍ") {
+  document.getElementById("config-banner").style.display = "block";
+}
+
+function toast(msg, type = "ok") {
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.className = type; t.style.display = "block";
+  setTimeout(() => t.style.display = "none", 3500);
+}
+function initials(name) {
+  return (name || "?").split(" ").slice(0,2).map(w => w[0]).join("").toUpperCase();
+}
+function norm(s) { return String(s || "").toLowerCase().trim(); }
+
+async function apiFetch(params) {
+  const res = await fetch(SCRIPT_URL + "?" + new URLSearchParams(params));
+  return res.json();
+}
+async function apiPost(body) {
+  const res = await fetch(SCRIPT_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify(body),
+  });
+  return res.json();
+}
+
+async function ensureAllLoaded() {
+  if (allRecords.length > 0) return;
+  const btn = document.getElementById("btn-search");
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>';
+  try {
+    const data = await apiFetch({ action: "getAll" });
+    allRecords = data.results || [];
+  } finally {
+    btn.disabled = false; btn.textContent = "Buscar";
+  }
+}
+
+function getFilters() {
+  return {
+    nombre:    norm(document.getElementById("f-search-nombre").value),
+    catequista:norm(document.getElementById("f-search-catequista").value),
+    celular:   norm(document.getElementById("f-search-celular").value),
+    padre:     norm(document.getElementById("f-search-padre").value),
+    padrino:   norm(document.getElementById("f-search-padrino").value),
+    parroquia: norm(document.getElementById("f-search-parroquia").value),
+    dia:       norm(document.getElementById("f-search-dia").value),
+    mes:       norm(document.getElementById("f-search-mes").value),
+    anio:      norm(document.getElementById("f-search-anio").value),
+    hora:      norm(document.getElementById("f-search-hora").value),
+  };
+}
+
+function hasAnyFilter(f) { return Object.values(f).some(v => v !== ""); }
+
+function applyFilters(records, f) {
+  return records.filter(r => {
+    if (f.nombre     && !norm(r[COLS.nombre]).includes(f.nombre))          return false;
+    if (f.catequista && !norm(r[COLS.catequista]).includes(f.catequista))  return false;
+    if (f.celular    && !norm(r[COLS.celular]).includes(f.celular))        return false;
+    if (f.padre      && !norm(r[COLS.papa]).includes(f.padre) &&
+                        !norm(r[COLS.mama]).includes(f.padre))             return false;
+    if (f.padrino    && !norm(r[COLS.padrino]).includes(f.padrino) &&
+                        !norm(r[COLS.madrina]).includes(f.padrino))        return false;
+    if (f.parroquia  && !norm(r[COLS.parroquia]).includes(f.parroquia) &&
+                        !norm(r[COLS.otraParroquia]).includes(f.parroquia))return false;
+    if (f.dia        && norm(r[COLS.diaConf]) !== f.dia)                   return false;
+    if (f.mes        && norm(r[COLS.mesConf]) !== f.mes)                   return false;
+    if (f.anio       && norm(r[COLS.anioConf]) !== f.anio)                 return false;
+    if (f.hora       && !norm(r[COLS.horaConf]).includes(f.hora))          return false;
+    return true;
+  });
+}
+
+function renderActiveTags(f) {
+  const labels = {
+    nombre: "Niño/a", catequista: "Catequista", celular: "Celular",
+    padre: "Papá/Mamá", padrino: "Padrino/Madrina", parroquia: "Parroquia",
+    dia: "Día", mes: "Mes", anio: "Año", hora: "Hora"
+  };
+  document.getElementById("active-filters").innerHTML = Object.entries(f)
+    .filter(([,v]) => v !== "")
+    .map(([k,v]) => `<span class="filter-tag">🔖 ${labels[k]}: ${v}</span>`)
+    .join("");
+}
+
+document.getElementById("btn-search").addEventListener("click", doSearch);
+document.getElementById("btn-all").addEventListener("click", async () => {
+  await ensureAllLoaded();
+  renderResults(allRecords);
+  renderActiveTags({});
+});
+document.getElementById("btn-clear").addEventListener("click", () => {
+  ["nombre","catequista","celular","padre","padrino","parroquia","dia","anio","hora"].forEach(id => {
+    document.getElementById("f-search-" + id).value = "";
+  });
+  document.getElementById("f-search-mes").value = "";
+  document.getElementById("active-filters").innerHTML = "";
+  document.getElementById("results-list").style.display = "none";
+});
+
+document.querySelectorAll(".filter-field input, .filter-field select").forEach(inp => {
+  inp.addEventListener("keydown", e => { if (e.key === "Enter") doSearch(); });
+});
+
+async function doSearch() {
+  const f = getFilters();
+  if (!hasAnyFilter(f)) { toast("Escribe al menos un filtro para buscar", "err"); return; }
+  await ensureAllLoaded();
+  document.getElementById("edit-card").style.display = "none";
+  renderActiveTags(f);
+  renderResults(applyFilters(allRecords, f));
+}
+
+function renderResults(rows) {
+  lastResults = rows;
+  const el = document.getElementById("results-list");
+  el.style.display = "block";
+  if (!rows.length) {
+    el.innerHTML = `<div class="empty-state"><span class="big">🔍</span>No se encontraron registros con esos filtros</div>`;
+    return;
+  }
+  el.innerHTML = `<div class="results-header"><span class="results-count">${rows.length} registro${rows.length!==1?"s":""} encontrado${rows.length!==1?"s":""}</span></div>` +
+    rows.map((r,i) => `
+      <div class="result-item" onclick="openEdit(${i})">
+        <div class="result-avatar">${initials(r[COLS.nombre])}</div>
+        <div>
+          <div class="result-name">${r[COLS.nombre]||"(sin nombre)"}</div>
+          <div class="result-meta">
+            👩‍🏫 ${r[COLS.catequista]||"—"} &nbsp;·&nbsp;
+            📱 ${r[COLS.celular]||"—"} &nbsp;·&nbsp;
+            📅 ${r[COLS.diaConf]||"?"} ${r[COLS.mesConf]||""} ${r[COLS.anioConf]||""}
+          </div>
+        </div>
+      </div>`).join("");
+}
+
+function openEdit(idx) {
+  currentRecord = lastResults[idx];
+  const r = currentRecord;
+  document.getElementById("f-timestamp").value     = r[COLS.timestamp]     || "";
+  document.getElementById("f-celular").value        = r[COLS.celular]       || "";
+  document.getElementById("f-dia-conf").value       = r[COLS.diaConf]       || "";
+  document.getElementById("f-mes-conf").value       = r[COLS.mesConf]       || "";
+  document.getElementById("f-anio-conf").value      = r[COLS.anioConf]      || "";
+  document.getElementById("f-hora").value           = r[COLS.horaConf]      || "";
+  document.getElementById("f-nombre").value         = r[COLS.nombre]        || "";
+  document.getElementById("f-papa").value           = r[COLS.papa]          || "";
+  document.getElementById("f-mama").value           = r[COLS.mama]          || "";
+  document.getElementById("f-padrino").value        = r[COLS.padrino]       || "";
+  document.getElementById("f-madrina").value        = r[COLS.madrina]       || "";
+  document.getElementById("f-parroquia").value      = r[COLS.parroquia]     || "";
+  document.getElementById("f-otra-parroquia").value = r[COLS.otraParroquia] || "";
+  document.getElementById("f-dia-bau").value        = r[COLS.diaBau]        || "";
+  document.getElementById("f-mes-bau").value        = r[COLS.mesBau]        || "";
+  document.getElementById("f-anio-bau").value       = r[COLS.anioBau]       || "";
+  document.getElementById("f-libro").value          = r[COLS.libro]         || "";
+  document.getElementById("f-pagina").value         = r[COLS.pagina]        || "";
+  document.getElementById("f-acta").value           = r[COLS.acta]          || "";
+  document.getElementById("f-catequista").value     = r[COLS.catequista]    || "";
+  document.getElementById("results-list").style.display = "none";
+  document.getElementById("edit-card").style.display = "block";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+document.getElementById("btn-back").addEventListener("click", () => {
+  document.getElementById("edit-card").style.display = "none";
+  document.getElementById("results-list").style.display = "block";
+});
+document.getElementById("btn-cancel").addEventListener("click", () => {
+  document.getElementById("edit-card").style.display = "none";
+  document.getElementById("results-list").style.display = "block";
+});
+
+document.getElementById("btn-save").addEventListener("click", async () => {
+  const btn = document.getElementById("btn-save");
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Guardando…';
+  const fields = {
+    [COLS.celular]:       document.getElementById("f-celular").value,
+    [COLS.diaConf]:       document.getElementById("f-dia-conf").value,
+    [COLS.mesConf]:       document.getElementById("f-mes-conf").value,
+    [COLS.anioConf]:      document.getElementById("f-anio-conf").value,
+    [COLS.horaConf]:      document.getElementById("f-hora").value,
+    [COLS.nombre]:        document.getElementById("f-nombre").value,
+    [COLS.papa]:          document.getElementById("f-papa").value,
+    [COLS.mama]:          document.getElementById("f-mama").value,
+    [COLS.padrino]:       document.getElementById("f-padrino").value,
+    [COLS.madrina]:       document.getElementById("f-madrina").value,
+    [COLS.parroquia]:     document.getElementById("f-parroquia").value,
+    [COLS.otraParroquia]: document.getElementById("f-otra-parroquia").value,
+    [COLS.diaBau]:        document.getElementById("f-dia-bau").value,
+    [COLS.mesBau]:        document.getElementById("f-mes-bau").value,
+    [COLS.anioBau]:       document.getElementById("f-anio-bau").value,
+    [COLS.libro]:         document.getElementById("f-libro").value,
+    [COLS.pagina]:        document.getElementById("f-pagina").value,
+    [COLS.acta]:          document.getElementById("f-acta").value,
+    [COLS.catequista]:    document.getElementById("f-catequista").value,
+  };
+  try {
+    const res = await apiPost({ action: "update", row: currentRecord._row, fields });
+    if (res.success) {
+      const idx = allRecords.findIndex(r => r._row === currentRecord._row);
+      if (idx >= 0) Object.assign(allRecords[idx], fields);
+      toast("✅ Registro actualizado correctamente");
+      document.getElementById("edit-card").style.display = "none";
+      document.getElementById("results-list").style.display = "none";
+    } else {
+      toast("Error al guardar. Intenta de nuevo.", "err");
+    }
+  } catch(e) {
+    toast("Error de conexión. Verifica la URL del script.", "err");
+  } finally {
+    btn.disabled = false; btn.innerHTML = "💾 Guardar cambios";
+  }
+});
+</script>
+</body>
+</html>
